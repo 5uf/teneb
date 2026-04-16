@@ -1,0 +1,5 @@
+{
+  "id": "implementation-tools",
+  "prompt": "Implement a plugin that compacts context, scores tools, and auto-installs dependencies only when safe. Please use Read, Edit, Bash, and maybe a search tool.",
+  "content": "We need Read, Edit, Bash, and WebSearch. We need Read, Edit, Bash, and WebSearch. Auto-install should be denied unless allowlisted and sandboxed. Use a learning store to persist mistakes and tool reliability. Use a learning store to persist mistakes and tool reliability."
+}

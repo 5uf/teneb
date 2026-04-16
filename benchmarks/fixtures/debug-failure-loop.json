@@ -1,0 +1,5 @@
+{
+  "id": "debug-failure-loop",
+  "prompt": "Debug a repeated failure loop where the model keeps calling the wrong tool and re-emitting the same output.",
+  "content": "The agent called the wrong tool twice. The agent called the wrong tool twice. The output repeated the same sentence. The learning system should record the failure fingerprint. The learning system should record the failure fingerprint."
+}

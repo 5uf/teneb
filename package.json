@@ -1,0 +1,19 @@
+{
+  "name": "teneb-claude-code",
+  "version": "5.0.0",
+  "description": "Claude Code control plane with micro-compaction, semantic deduplication, predictive execution, and benchmark tooling.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "teneb": "./src/cli.js"
+  },
+  "scripts": {
+    "benchmark": "node ./src/benchmark/benchmark.js",
+    "report": "node ./src/benchmark/dashboard.js",
+    "demo": "node ./src/cli.js demo",
+    "lint": "node ./src/cli.js doctor"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

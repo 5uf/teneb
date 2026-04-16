@@ -1,0 +1,5 @@
+{
+  "id": "research-dup",
+  "prompt": "Research the Claude Code hook system, explain hooks, MCP prompts, and context windows. Be concise and avoid repeating the same point twice.",
+  "content": "Claude Code hooks can run before and after tool calls. Claude Code hooks can run before and after tool calls. MCP prompts become slash commands. The context window is finite and should be compressed. The context window is finite and should be compressed. Provide a brief, structured answer."
+}
