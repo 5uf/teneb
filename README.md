@@ -12,10 +12,13 @@ A Claude Code plugin that reduces token usage by compressing tool outputs, block
 Teneb hooks into Claude Code's lifecycle and works silently in the background:
 
 - **Compresses tool outputs** — Read, Bash, Edit results are compacted before re-entering Claude's context window. ~42% average token reduction.
-- **Blocks vague prompts** — Catches ambiguous or gibberish prompts before they waste an API call (~40K tokens saved per blocked prompt).
+- **Diff-aware re-reads** — When Claude reads the same file twice, Teneb replaces the second read with a unified diff or "unchanged" marker. Saves 80–95% on repeat reads.
+- **MCP compression** — Schema-aware JSON compression for `mcp__*` tools (Figma, Serena, Playwright, etc.) that return huge payloads: truncates arrays, drops empty fields, caps nested depth.
+- **Smart file picker** — Before Read/Glob/Grep, Teneb scans the repo and hints at the most relevant files based on your prompt keywords.
 - **Fixes typos** — Auto-corrects 50 common programming typos (e.g. `fucntion` → `function`) silently.
 - **Manages context budget** — Tracks token usage across your session with three pressure tiers (green/yellow/red). Compression gets more aggressive as you approach the context limit.
 - **Suggests next steps** — After each tool call and at session end, recommends what to do next and which model to use.
+- **Prompt templates** — `teneb prompt debug|review|refactor|...` prints proven prompt structures you can pipe into Claude.
 - **Learns across sessions** — Records tool reliability, success rates, and patterns to improve recommendations over time.
 - **Rust/WASM engine** — Optional native compaction engine for faster processing.
 
@@ -70,9 +73,9 @@ Teneb uses [Claude Code hooks](https://docs.anthropic.com/en/docs/claude-code/ho
 | Hook | What Teneb does |
 |------|----------------|
 | **SessionStart** | Resets the token budget for the new session |
-| **PromptSubmit** | Fixes typos, blocks vague prompts, tracks token usage |
-| **PreToolUse** | Recommends tools, blocks risky commands, injects conciseness hints at high pressure |
-| **PostToolUse** | Compresses tool output, applies smart truncation, tracks budget, hints next step |
+| **PromptSubmit** | Fixes typos, tracks token usage |
+| **PreToolUse** | Recommends tools, blocks risky commands, suggests relevant files for Read/Glob/Grep, injects conciseness hints at high pressure |
+| **PostToolUse** | Diff-aware Read cache, MCP JSON compression, smart truncation, microCompact, budget tracking, next-step hint |
 | **Stop** | Suggests what to do next and which model to use |
 | **SessionEnd** | Prints session summary (tokens saved, tools used, budget status) |
 
@@ -81,8 +84,8 @@ Teneb uses [Claude Code hooks](https://docs.anthropic.com/en/docs/claude-code/ho
 | Tier | Context used | What changes |
 |------|-------------|-------------|
 | Green | < 40% | Normal compaction |
-| Yellow | 40–80% | Tighter compression, stricter prompt gate, "prefer short answers" hint |
-| Red | > 80% | Aggressive compression, vague prompts blocked, "be concise" injected |
+| Yellow | 40–80% | Tighter compression (maxLength 140), "prefer short answers" hint injected |
+| Red | > 80% | Aggressive compression (maxLength 80), "be concise" hint injected |
 
 ## Benchmarking
 
@@ -131,11 +134,30 @@ npm run ab                # replays them alongside synthetic fixtures
 
 | Command | What it does |
 |---------|-------------|
-| `npm test` | Run all tests (129 tests) |
+| `npm test` | Run all tests (162 tests across 35 suites) |
 | `npm run ab` | Offline A/B token comparison |
 | `npm run live-ab` | Live Claude Code A/B benchmark |
 | `npm run benchmark` | Full benchmark suite |
 | `npm run report` | Generate benchmark dashboard |
+| `teneb prompt <name>` | Print a proven prompt template |
+| `teneb prompt --list` | List available templates |
+| `teneb doctor` | Check installation health |
+
+## Prompt templates
+
+```bash
+teneb prompt debug      # structured debugging workflow
+teneb prompt review     # severity-rated code review
+teneb prompt refactor   # behavior-preserving refactor guide
+teneb prompt write-test # TDD test-writing guide
+teneb prompt commit     # commit-message review
+teneb prompt explain    # concise code explanation
+```
+
+Pipe into Claude:
+```bash
+teneb prompt debug | claude -p -
+```
 
 ## Configuration
 
@@ -162,14 +184,19 @@ src/
   micro-compact.js        # Text compaction (filler removal, alias tables)
   semantic-deduper.js     # Near-duplicate sentence removal
   token-budget.js         # Per-session budget tracking
-  prompt-guard.js         # Typo correction + ambiguity detection
+  prompt-guard.js         # Typo correction (ambiguity check available, disabled by default)
   next-step-advisor.js    # Next action + model recommendations
+  read-cache.js           # Diff-aware Read cache (replace re-reads with diffs)
+  mcp-compactor.js        # JSON compression for MCP tool outputs
+  file-picker.js          # Keyword-ranked file suggestions for Read/Glob/Grep
+  prompts/templates.js    # Built-in prompt templates (debug, review, refactor, ...)
   tool-broker.js          # Tool scoring + auto-install gate
   predictive-planner.js   # Predictive execution planning
   learning-store.js       # Cross-session JSONL learning store
   wasm-bridge.js          # Rust/WASM engine loader
   config.js               # Configuration defaults + merging
-  tests/                  # 129 tests across 27 suites
+  index.d.ts              # Public TypeScript declarations
+  tests/                  # 162 tests across 35 suites
 
 .claude/hooks/            # Claude Code hook entry points
 rust-wasm/                # Rust compaction engine (no_std, 51KB WASM)

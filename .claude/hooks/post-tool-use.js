@@ -103,15 +103,15 @@ recordTokens(projectDir, compacted.stats.after_tokens);
 
 const hint = quickHint(toolName, outputStr, brief);
 
-process.stdout.write(JSON.stringify({
-  decision: 'continue',
-  hookSpecificOutput: {
-    hookEventName: 'PostToolUse',
-    additionalContext: [
-      `Teneb compressed tool output from ~${compacted.stats.before_tokens} to ~${compacted.stats.after_tokens} tokens.`,
-      `Key summary: ${compacted.compacted}`,
-      ...(hint ? [hint] : [])
-    ].join('\n'),
-    updatedMCPToolOutput: compacted.compacted
-  }
-}, null, 2));
+const isMcp = typeof toolName === 'string' && toolName.startsWith('mcp__');
+const hookOut = {
+  hookEventName: 'PostToolUse',
+  additionalContext: [
+    `Teneb compressed tool output from ~${compacted.stats.before_tokens} to ~${compacted.stats.after_tokens} tokens.`,
+    `Key summary: ${compacted.compacted}`,
+    ...(hint ? [hint] : [])
+  ].join('\n')
+};
+if (isMcp) hookOut.updatedMCPToolOutput = compacted.compacted;
+
+process.stdout.write(JSON.stringify({ hookSpecificOutput: hookOut }, null, 2));
