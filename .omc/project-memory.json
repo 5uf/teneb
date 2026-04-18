@@ -143,14 +143,26 @@
     },
     {
       "path": "package.json",
-      "accessCount": 9,
-      "lastAccessed": 1776445616334,
+      "accessCount": 11,
+      "lastAccessed": 1776494081111,
+      "type": "file"
+    },
+    {
+      "path": "src/prompt-guard.js",
+      "accessCount": 10,
+      "lastAccessed": 1776493880418,
       "type": "file"
     },
     {
       "path": "rust-wasm/src/lib.rs",
       "accessCount": 8,
       "lastAccessed": 1776441092254,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/prompt-submit.js",
+      "accessCount": 8,
+      "lastAccessed": 1776493559061,
       "type": "file"
     },
     {
@@ -166,21 +178,9 @@
       "type": "file"
     },
     {
-      "path": ".claude/hooks/prompt-submit.js",
-      "accessCount": 6,
-      "lastAccessed": 1776445333978,
-      "type": "file"
-    },
-    {
       "path": "src/config.js",
       "accessCount": 5,
       "lastAccessed": 1776445096116,
-      "type": "file"
-    },
-    {
-      "path": "src/prompt-guard.js",
-      "accessCount": 5,
-      "lastAccessed": 1776445286152,
       "type": "file"
     },
     {
@@ -250,6 +250,18 @@
       "type": "file"
     },
     {
+      "path": "src/cli.js",
+      "accessCount": 3,
+      "lastAccessed": 1776493964724,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 3,
+      "lastAccessed": 1776494087886,
+      "type": "directory"
+    },
+    {
       "path": "rust-wasm/Cargo.toml",
       "accessCount": 2,
       "lastAccessed": 1776323331865,
@@ -298,12 +310,6 @@
       "type": "file"
     },
     {
-      "path": "",
-      "accessCount": 2,
-      "lastAccessed": 1776491035184,
-      "type": "directory"
-    },
-    {
       "path": "src/micro-compact.js",
       "accessCount": 1,
       "lastAccessed": 1776322060843,
@@ -331,12 +337,6 @@
       "path": "src/verifier.js",
       "accessCount": 1,
       "lastAccessed": 1776322067812,
-      "type": "file"
-    },
-    {
-      "path": "src/cli.js",
-      "accessCount": 1,
-      "lastAccessed": 1776322068293,
       "type": "file"
     },
     {

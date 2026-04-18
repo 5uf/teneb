@@ -79,9 +79,73 @@ async function cmdPlan() {
   process.stdout.write(JSON.stringify(plan, null, 2));
 }
 
+async function cmdInit() {
+  const target = process.cwd();
+  const pkgRoot = path.resolve(__dirname, '..');
+
+  if (target === pkgRoot) {
+    console.error('teneb init: refusing to run inside the package itself. cd into your project first.');
+    process.exit(1);
+  }
+
+  const copyDir = (src, dest) => {
+    fs.mkdirSync(dest, { recursive: true });
+    for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+      const s = path.join(src, entry.name);
+      const d = path.join(dest, entry.name);
+      if (entry.isDirectory()) copyDir(s, d);
+      else fs.copyFileSync(s, d);
+    }
+  };
+
+  const steps = [];
+
+  // Copy hooks
+  const hooksSrc = path.join(pkgRoot, '.claude', 'hooks');
+  const hooksDst = path.join(target, '.claude', 'hooks');
+  copyDir(hooksSrc, hooksDst);
+  for (const f of fs.readdirSync(hooksDst)) {
+    if (f.endsWith('.js') || f.endsWith('.mjs')) fs.chmodSync(path.join(hooksDst, f), 0o755);
+  }
+  steps.push(`copied ${fs.readdirSync(hooksDst).length} hook files → .claude/hooks/`);
+
+  // Copy src
+  const srcDst = path.join(target, 'src');
+  if (fs.existsSync(srcDst)) {
+    steps.push('src/ already exists — skipped (remove it first for a clean install)');
+  } else {
+    copyDir(path.join(pkgRoot, 'src'), srcDst);
+    steps.push('copied src/ runtime');
+  }
+
+  // Copy settings.json
+  const settingsSrc = path.join(pkgRoot, '.claude', 'settings.example.json');
+  const settingsDst = path.join(target, '.claude', 'settings.json');
+  if (fs.existsSync(settingsDst)) {
+    steps.push('.claude/settings.json already exists — skipped');
+  } else if (fs.existsSync(settingsSrc)) {
+    fs.copyFileSync(settingsSrc, settingsDst);
+    steps.push('wrote .claude/settings.json');
+  }
+
+  // Optional: copy rust-wasm if present
+  const wasmSrc = path.join(pkgRoot, 'rust-wasm');
+  const wasmDst = path.join(target, 'rust-wasm');
+  if (fs.existsSync(wasmSrc) && !fs.existsSync(wasmDst)) {
+    copyDir(wasmSrc, wasmDst);
+    steps.push('copied rust-wasm/ (run `cargo build --target wasm32-unknown-unknown --release` to compile)');
+  }
+
+  console.log('Teneb installed:');
+  for (const s of steps) console.log(`  • ${s}`);
+  console.log('\nRestart Claude Code in this directory to activate hooks.');
+}
+
 async function main() {
   const [,, command] = process.argv;
   switch (command) {
+    case 'init':
+      await cmdInit(); break;
     case 'demo':
       await cmdDemo(); break;
     case 'doctor':
@@ -94,8 +158,9 @@ async function main() {
       console.log(`Teneb CLI
 
 Usage:
-  teneb demo
-  teneb doctor
+  teneb init              # install hooks into the current project
+  teneb doctor            # check installation health
+  teneb demo              # show pipeline output
   cat prompt.txt | teneb compact
   cat prompt.txt | teneb plan
 `);

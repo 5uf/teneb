@@ -16,18 +16,35 @@ Teneb hooks into Claude Code's lifecycle and works silently in the background:
 
 ## Install
 
+Pick whichever you prefer.
+
+**One-line curl:**
 ```bash
-git clone https://github.com/YOUR_USERNAME/teneb.git
-cd teneb
-
-# Copy the hook config into place
-cp .claude/settings.example.json .claude/settings.json
-
-# Make hooks executable
-chmod +x .claude/hooks/*.js
+cd your-project
+curl -fsSL https://raw.githubusercontent.com/5uf/teneb/main/install.sh | bash
 ```
 
-That's it. Open the project in Claude Code and Teneb is active.
+**npm (global):**
+```bash
+npm i -g teneb-claude-code
+cd your-project
+teneb init
+```
+
+**Manual (clone the repo):**
+```bash
+git clone https://github.com/5uf/teneb.git
+cd your-project
+node /path/to/teneb/src/cli.js init
+```
+
+**As a Claude Code plugin (system-wide, all projects):**
+
+Point Claude Code at the cloned repo via its plugin system. The repo includes a `hooks.json` manifest using `$CLAUDE_PLUGIN_ROOT` so one install activates Teneb across every project. No per-project copying needed.
+
+Any of these will copy hooks + runtime into your project's `.claude/hooks/` and `src/`, and write `.claude/settings.json`. Restart Claude Code in that directory and Teneb is active.
+
+Run `teneb doctor` to check the install.
 
 ### Optional: Build the WASM engine
 

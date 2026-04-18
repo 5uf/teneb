@@ -112,6 +112,12 @@ const VERBS = new Set([
   'unwrap', 'log', 'print', 'trace', 'monitor', 'watch', 'start',
   'stop', 'restart', 'reset', 'clear', 'clean', 'fetch', 'pull',
   'push', 'commit', 'revert', 'rebase', 'cherry-pick',
+  'choose', 'pick', 'select', 'got', 'get', 'gets', 'getting',
+  'want', 'need', 'mean', 'think', 'know', 'see', 'use', 'using',
+  'like', 'prefer', 'try', 'tell', 'give', 'take', 'let',
+  'work', 'does', 'did', 'done', 'am', 'is', 'are', 'was', 'were',
+  'have', 'has', 'had', 'go', 'goes', 'come', 'came', 'put', 'set',
+  'ask', 'answer', 'reply', 'respond', 'say', 'said', 'mention',
 ]);
 
 // ~150 common programming / English nouns + adjectives
@@ -190,11 +196,16 @@ export function checkAmbiguity(text, tier = 'green') {
   const rawTokens = trimmed.split(/\s+/).filter(Boolean);
   const words = rawTokens.map(w => w.replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase()).filter(Boolean);
 
-  // Gibberish check: >40% of words not in known set → blocked
-  if (words.length > 0) {
-    const unknownCount = words.filter(w => !KNOWN_WORDS.has(w)).length;
+  // Gibberish check: >50% of words not in known set → blocked.
+  // Numbers, single letters, and short words count as known.
+  if (words.length >= 4) {
+    const unknownCount = words.filter(w =>
+      !KNOWN_WORDS.has(w) &&
+      !/^\d+$/.test(w) &&
+      w.length > 1
+    ).length;
     const unknownRatio = unknownCount / words.length;
-    if (unknownRatio > 0.4) {
+    if (unknownRatio > 0.5) {
       return { blocked: true, reason: 'Prompt appears to be gibberish — most words are unrecognized.' };
     }
   }

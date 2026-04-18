@@ -1,9 +1,12 @@
 {
   "name": "teneb-claude-code",
   "version": "5.0.0",
-  "description": "Claude Code control plane with micro-compaction, semantic deduplication, predictive execution, and benchmark tooling.",
+  "description": "Claude Code plugin: compresses tool outputs, blocks wasteful prompts, manages context budget. ~42% token reduction.",
   "type": "module",
-  "private": true,
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/5uf/teneb.git" },
+  "keywords": ["claude", "claude-code", "anthropic", "hooks", "llm", "token-reduction", "compaction"],
+  "files": [".claude/hooks", ".claude/settings.example.json", "src", "rust-wasm/src", "rust-wasm/Cargo.toml", "install.sh", "README.md", "LICENSE"],
   "bin": {
     "teneb": "./src/cli.js"
   },
