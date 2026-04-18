@@ -3,10 +3,12 @@
   "version": "5.0.0",
   "description": "Claude Code plugin: compresses tool outputs, blocks wasteful prompts, manages context budget. ~42% token reduction.",
   "type": "module",
+  "main": "src/cli.js",
+  "types": "src/index.d.ts",
   "license": "MIT",
   "repository": { "type": "git", "url": "git+https://github.com/5uf/teneb.git" },
   "keywords": ["claude", "claude-code", "anthropic", "hooks", "llm", "token-reduction", "compaction"],
-  "files": [".claude/hooks", ".claude/settings.example.json", "src", "rust-wasm/src", "rust-wasm/Cargo.toml", "install.sh", "README.md", "LICENSE"],
+  "files": [".claude/hooks", ".claude/settings.example.json", "src", "src/index.d.ts", "rust-wasm/src", "rust-wasm/Cargo.toml", "install.sh", "README.md", "LICENSE"],
   "bin": {
     "teneb": "./src/cli.js"
   },

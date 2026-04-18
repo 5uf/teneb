@@ -4,6 +4,7 @@ import { LearningStore } from '../../src/learning-store.js';
 import { ToolBroker } from '../../src/tool-broker.js';
 import { loadProjectConfig } from '../../src/config.js';
 import { loadBudget } from '../../src/token-budget.js';
+import { suggestFiles } from '../../src/file-picker.js';
 
 const input = await (async () => {
   let data = '';
@@ -66,11 +67,20 @@ const pressureHint = budget.pressure.tier === 'red'
     ? 'Context budget elevated — prefer short answers. '
     : '';
 
+// Smart file picker: suggest relevant files for Read-like operations
+let fileSuggestions = '';
+if (['Read', 'Glob', 'Grep'].includes(toolName)) {
+  const sug = suggestFiles(projectDir, promptText || '', 3);
+  if (sug.length > 0) {
+    fileSuggestions = ' Teneb suggests: ' + sug.map(s => s.file).join(', ') + '.';
+  }
+}
+
 const systemMessage = pressureHint + [
   top ? `Teneb recommends ${top.name} (score ${top.score.toFixed(2)}).` : 'Teneb recommends answering directly.',
   `Task type: ${brief.task_type}.`,
   autoInstall.allowed ? 'Auto-install gate: allowed.' : `Auto-install gate: ${autoInstall.reason}`
-].join(' ');
+].join(' ') + fileSuggestions;
 
 process.stdout.write(JSON.stringify({
   hookSpecificOutput: {

@@ -8,6 +8,8 @@ import { microCompact } from '../../src/micro-compact.js';
 import { loadProjectConfig } from '../../src/config.js';
 import { loadBudget, recordTokens, maxLengthForTier } from '../../src/token-budget.js';
 import { quickHint } from '../../src/next-step-advisor.js';
+import { processReadOutput } from '../../src/read-cache.js';
+import { compactMcpOutput } from '../../src/mcp-compactor.js';
 
 function smartTruncate(output, toolName, tier) {
   const lines = output.split('\n');
@@ -52,10 +54,23 @@ const toolInput = input.tool_input || input.toolInput || {};
 const brief = compilePrompt(JSON.stringify(toolInput) + '\n' + String(toolOutput));
 const outputStr = String(toolOutput || '');
 
+// Diff-aware Read: replace re-read output with unified diff or "unchanged" marker.
+let processedOutput = outputStr;
+if (toolName === 'Read') {
+  const filePath = toolInput.file_path || toolInput.filePath || toolInput.path;
+  if (filePath) {
+    const result = processReadOutput(projectDir, filePath, outputStr);
+    processedOutput = result.output;
+  }
+}
+
+// MCP tools: apply schema-aware JSON compression
+processedOutput = compactMcpOutput(toolName, processedOutput);
+
 const budget = loadBudget(projectDir, { green: config.budget?.green_threshold, yellow: config.budget?.yellow_threshold });
 const tierMaxLength = maxLengthForTier(budget.pressure.tier);
 
-const truncated = smartTruncate(outputStr, toolName, budget.pressure.tier);
+const truncated = smartTruncate(processedOutput, toolName, budget.pressure.tier);
 const t0 = performance.now();
 const compacted = microCompact(truncated, { maxLength: tierMaxLength, aliasMinLength: config.compaction.aliasMinLength });
 const compact_ms = Math.round(performance.now() - t0);

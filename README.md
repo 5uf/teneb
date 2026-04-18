@@ -1,5 +1,10 @@
 # Teneb
 
+[![npm version](https://img.shields.io/npm/v/teneb-claude-code.svg)](https://www.npmjs.com/package/teneb-claude-code)
+[![Tests](https://github.com/5uf/teneb/actions/workflows/test.yml/badge.svg)](https://github.com/5uf/teneb/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)]()
+
 A Claude Code plugin that reduces token usage by compressing tool outputs, blocking wasteful prompts, and managing your context budget automatically.
 
 ## What it does

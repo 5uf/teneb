@@ -52,13 +52,8 @@ if (corrected !== rawPrompt) {
   store.recordRun({ type: 'typo-correction', original: rawPrompt.slice(0, 100), corrected: corrected.slice(0, 100), pattern: 'prompt-guard' });
 }
 
-// Ambiguity check
-const ambiguity = checkAmbiguity(corrected, budget.pressure.tier);
-if (ambiguity.blocked) {
-  recordBlocked(projectDir);
-  process.stdout.write(JSON.stringify({ decision: 'block', reason: ambiguity.reason }, null, 2));
-  process.exit(0);
-}
+// Ambiguity check disabled — allow short/conversational prompts.
+// Typo correction above still runs; budget tracking below still runs.
 
 // Record estimated tokens to budget
 recordTokens(projectDir, Math.ceil(corrected.length / 4));

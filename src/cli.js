@@ -11,6 +11,7 @@ import { LearningStore } from './learning-store.js';
 import { ToolBroker, DEFAULT_TOOLS } from './tool-broker.js';
 import { PredictiveExecutionPlanner } from './predictive-planner.js';
 import { verifyOutput } from './verifier.js';
+import { getTemplate, listTemplates } from './prompts/templates.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.resolve(__dirname, '..');
@@ -77,6 +78,22 @@ async function cmdPlan() {
   const brief = compilePrompt(input || '');
   const plan = planner.plan(brief, {}, DEFAULT_TOOLS);
   process.stdout.write(JSON.stringify(plan, null, 2));
+}
+
+async function cmdPrompt() {
+  const [,,, name] = process.argv;
+  if (!name || name === '--list') {
+    console.log('Available templates:');
+    for (const t of listTemplates()) console.log('  ' + t);
+    return;
+  }
+  const body = getTemplate(name);
+  if (!body) {
+    console.error(`Unknown template: ${name}`);
+    console.error('Available: ' + listTemplates().join(', '));
+    process.exit(1);
+  }
+  console.log(body);
 }
 
 async function cmdInit() {
@@ -154,6 +171,8 @@ async function main() {
       await cmdCompact(); break;
     case 'plan':
       await cmdPlan(); break;
+    case 'prompt':
+      await cmdPrompt(); break;
     default:
       console.log(`Teneb CLI
 
@@ -163,6 +182,8 @@ Usage:
   teneb demo              # show pipeline output
   cat prompt.txt | teneb compact
   cat prompt.txt | teneb plan
+  teneb prompt <name>     # print a prompt template (debug, review, refactor, ...)
+  teneb prompt --list     # list available templates
 `);
   }
 }
