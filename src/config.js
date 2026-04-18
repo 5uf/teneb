@@ -23,6 +23,11 @@ export function defaultConfig(projectDir = process.cwd()) {
     toolReliability: {
       minScore: 0.55,
       preferKnownGood: true
+    },
+    budget: {
+      max_tokens: 200000,
+      green_threshold: 0.4,
+      yellow_threshold: 0.8
     }
   };
 }
@@ -38,7 +43,8 @@ export function mergeConfig(base, override) {
     ...override,
     autoInstall: { ...base.autoInstall, ...(override?.autoInstall || {}) },
     compaction: { ...base.compaction, ...(override?.compaction || {}) },
-    toolReliability: { ...base.toolReliability, ...(override?.toolReliability || {}) }
+    toolReliability: { ...base.toolReliability, ...(override?.toolReliability || {}) },
+    budget: { ...base.budget, ...(override?.budget || {}) }
   };
 }
 

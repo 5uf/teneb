@@ -11,6 +11,10 @@ export class PredictiveExecutionPlanner {
     const hints = contextPack.open_questions || [];
     const hasResearchNeed = /\b(research|compare|evaluate|latest|source|docs)\b/i.test(promptBrief.prompt || '');
 
+    // Cross-session learning: adjust confidence from historical fingerprint
+    const fp = this.learningStore?.getFingerprint(promptBrief.task_type, []);
+    const sessionBoost = fp && fp.attempts > 2 ? (fp.success_rate - 0.5) * 0.2 : 0;
+
     const steps = [];
     steps.push({
       id: 'step-0',
@@ -48,11 +52,15 @@ export class PredictiveExecutionPlanner {
       });
     }
 
+    const baseConfidence = steps.find((s) => s.kind === 'tool')?.confidence || 0.5;
     return {
       plan_id: `plan-${Date.now()}`,
       steps,
       predicted_tool: steps.find((s) => s.kind === 'tool')?.tool || null,
-      confidence: steps.find((s) => s.kind === 'tool')?.confidence || 0.5,
+      confidence: Math.min(1, Math.max(0, baseConfidence + sessionBoost)),
+      session_boost: sessionBoost,
+      prior_attempts: fp?.attempts ?? 0,
+      prior_success_rate: fp?.success_rate ?? null,
       forecast: steps.map((s) => s.tool || s.action)
     };
   }

@@ -1,4 +1,5 @@
 node_modules
+benchmarks/captures
 .teneb
 benchmarks/results
 dashboard/report.html

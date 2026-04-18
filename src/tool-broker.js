@@ -22,7 +22,7 @@ function heuristicNeed(promptBrief, toolName) {
   };
   if (type === 'debugging') return ['Read', 'Edit', 'Bash'].includes(toolName);
   if (type === 'analysis') return ['Read', 'WebSearch', 'WebFetch'].includes(toolName);
-  return heuristicNeed[promptBrief.task_type] ? heuristicNeed[promptBrief.task_type] : !!map[toolName];
+  return !!map[toolName];
 }
 
 export class ToolBroker {
@@ -85,7 +85,8 @@ export class ToolBroker {
       if (pattern.endsWith('/*')) return pkg.startsWith(pattern.slice(0, -1));
       return pattern === pkg;
     });
-    const riskScore = clamp(Number(spec.risk_score ?? 1), 0, 1);
+    const rawRisk = Number(spec.risk_score ?? 1);
+    const riskScore = clamp(isNaN(rawRisk) ? 1 : rawRisk, 0, 1);
 
     if (!hasOptIn) {
       return { allowed: false, reason: 'Auto-install is disabled unless TENEB_AUTO_INSTALL=1 is set.' };

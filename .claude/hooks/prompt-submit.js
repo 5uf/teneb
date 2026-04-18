@@ -1,8 +1,19 @@
 #!/usr/bin/env node
 import './shared.mjs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { compilePrompt } from '../../src/prompt-compiler.js';
 import { semanticDeduplicate } from '../../src/semantic-deduper.js';
 import { compactContextPack } from '../../src/micro-compact.js';
+import { loadBudget, recordTokens, recordBlocked } from '../../src/token-budget.js';
+import { autoCorrectTypos, checkAmbiguity } from '../../src/prompt-guard.js';
+import { loadProjectConfig } from '../../src/config.js';
+import { LearningStore } from '../../src/learning-store.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const projectDir = path.resolve(__dirname, '../..');
+const config = loadProjectConfig(projectDir);
+const store = new LearningStore(config.learningFile);
 
 const input = await (async () => {
   let data = '';
@@ -27,6 +38,30 @@ const contextPack = compactContextPack({
   next_step: 'Run the predictive planner and tool broker',
   recommended_tools: []
 }, { maxLength: 220 });
+
+// Quality gate
+const rawPrompt = input.prompt || input.user_prompt || '';
+const budget = loadBudget(projectDir, {
+  green: config.budget?.green_threshold,
+  yellow: config.budget?.yellow_threshold
+});
+
+// Auto-correct typos
+const corrected = autoCorrectTypos(rawPrompt);
+if (corrected !== rawPrompt) {
+  store.recordRun({ type: 'typo-correction', original: rawPrompt.slice(0, 100), corrected: corrected.slice(0, 100), pattern: 'prompt-guard' });
+}
+
+// Ambiguity check
+const ambiguity = checkAmbiguity(corrected, budget.pressure.tier);
+if (ambiguity.blocked) {
+  recordBlocked(projectDir);
+  process.stdout.write(JSON.stringify({ decision: 'block', reason: ambiguity.reason }, null, 2));
+  process.exit(0);
+}
+
+// Record estimated tokens to budget
+recordTokens(projectDir, Math.ceil(corrected.length / 4));
 
 process.stdout.write([
   'TENEB_PROMPT_BRIEF',

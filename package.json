@@ -8,10 +8,15 @@
     "teneb": "./src/cli.js"
   },
   "scripts": {
+    "test": "node --test src/tests/*.test.js",
     "benchmark": "node ./src/benchmark/benchmark.js",
     "report": "node ./src/benchmark/dashboard.js",
     "demo": "node ./src/cli.js demo",
-    "lint": "node ./src/cli.js doctor"
+    "lint": "node ./src/cli.js doctor",
+    "ab": "node ./src/benchmark/ab-compare.js",
+    "live-ab": "node ./src/benchmark/live-ab.js",
+    "live-ab:code": "node ./src/benchmark/live-ab.js --prompt-set code",
+    "live-ab:all": "node ./src/benchmark/live-ab.js --prompt-set all"
   },
   "engines": {
     "node": ">=20"

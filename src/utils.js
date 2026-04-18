@@ -50,7 +50,6 @@ export function extractPhrases(text) {
   const phrases = [];
   const regexes = [
     /[a-z][a-z0-9._/-]{6,}/g,
-    /\b[a-z]+[A-Z][a-zA-Z0-9]+/g,
     /\b[A-Z][A-Za-z0-9]{5,}\b/g
   ];
   for (const rx of regexes) {
@@ -63,7 +62,6 @@ export function extractPhrases(text) {
 export function jaccard(a, b) {
   const setA = new Set(a);
   const setB = new Set(b);
-  if (!setA.size && !setB.size) return 1;
   const inter = [...setA].filter((x) => setB.has(x)).length;
   const union = new Set([...setA, ...setB]).size;
   return union ? inter / union : 0;
@@ -77,6 +75,7 @@ export function ngrams(text, n = 3) {
 }
 
 export function semanticSimilarity(a, b) {
+  if (a === b) return 1;  // fast path: exact match bypasses ngram degeneracy on short strings
   const sa = new Set(ngrams(a));
   const sb = new Set(ngrams(b));
   return jaccard(sa, sb);

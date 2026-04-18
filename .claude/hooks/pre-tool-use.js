@@ -3,6 +3,7 @@ import { compilePrompt } from '../../src/prompt-compiler.js';
 import { LearningStore } from '../../src/learning-store.js';
 import { ToolBroker } from '../../src/tool-broker.js';
 import { loadProjectConfig } from '../../src/config.js';
+import { loadBudget } from '../../src/token-budget.js';
 
 const input = await (async () => {
   let data = '';
@@ -58,7 +59,14 @@ if (toolName.toLowerCase().includes('install') && !autoInstall.allowed) {
   process.exit(0);
 }
 
-const systemMessage = [
+const budget = loadBudget(projectDir, { green: config.budget?.green_threshold, yellow: config.budget?.yellow_threshold });
+const pressureHint = budget.pressure.tier === 'red'
+  ? 'CONTEXT BUDGET CRITICAL — be maximally concise. '
+  : budget.pressure.tier === 'yellow'
+    ? 'Context budget elevated — prefer short answers. '
+    : '';
+
+const systemMessage = pressureHint + [
   top ? `Teneb recommends ${top.name} (score ${top.score.toFixed(2)}).` : 'Teneb recommends answering directly.',
   `Task type: ${brief.task_type}.`,
   autoInstall.allowed ? 'Auto-install gate: allowed.' : `Auto-install gate: ${autoInstall.reason}`

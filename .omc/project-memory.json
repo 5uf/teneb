@@ -1,0 +1,434 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1776419122805,
+  "projectRoot": "/Users/suf/Desktop/Dev/teneb",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": ">=20",
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": "Node.js 20"
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint",
+    "devCommand": null,
+    "scripts": {
+      "test": "node --test src/tests/*.test.js",
+      "benchmark": "node ./src/benchmark/benchmark.js",
+      "report": "node ./src/benchmark/dashboard.js",
+      "demo": "node ./src/cli.js demo",
+      "lint": "node ./src/cli.js doctor"
+    }
+  },
+  "conventions": {
+    "namingStyle": "camelCase/PascalCase",
+    "importStyle": "ES modules",
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "benchmarks": {
+      "path": "benchmarks",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1776419122798,
+      "keyFiles": []
+    },
+    "dashboard": {
+      "path": "dashboard",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1776419122798,
+      "keyFiles": [
+        "index.html",
+        "report.html"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 1,
+      "lastAccessed": 1776419122801,
+      "keyFiles": [
+        "USAGE.md"
+      ]
+    },
+    "rust-wasm": {
+      "path": "rust-wasm",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1776419122802,
+      "keyFiles": [
+        "Cargo.lock",
+        "Cargo.toml"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 12,
+      "lastAccessed": 1776419122802,
+      "keyFiles": [
+        "cli.js",
+        "config.js",
+        "learning-store.js",
+        "micro-compact.js",
+        "predictive-planner.js"
+      ]
+    },
+    "benchmarks/fixtures": {
+      "path": "benchmarks/fixtures",
+      "purpose": "Test fixtures",
+      "fileCount": 3,
+      "lastAccessed": 1776419122803,
+      "keyFiles": [
+        "debug-failure-loop.json",
+        "implementation-tools.json",
+        "research-dup.json"
+      ]
+    },
+    "rust-wasm/src": {
+      "path": "rust-wasm/src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1776419122804,
+      "keyFiles": [
+        "lib.rs"
+      ]
+    },
+    "src/tests": {
+      "path": "src/tests",
+      "purpose": "Test files",
+      "fileCount": 6,
+      "lastAccessed": 1776419122805,
+      "keyFiles": [
+        "learning-store.test.js",
+        "micro-compact.test.js",
+        "planner.test.js"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": ".claude/hooks/post-tool-use.js",
+      "accessCount": 19,
+      "lastAccessed": 1776445753236,
+      "type": "file"
+    },
+    {
+      "path": "src/utils.js",
+      "accessCount": 11,
+      "lastAccessed": 1776445621115,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 9,
+      "lastAccessed": 1776445616334,
+      "type": "file"
+    },
+    {
+      "path": "rust-wasm/src/lib.rs",
+      "accessCount": 8,
+      "lastAccessed": 1776441092254,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/session-end.js",
+      "accessCount": 7,
+      "lastAccessed": 1776445391504,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/pre-tool-use.js",
+      "accessCount": 6,
+      "lastAccessed": 1776445316575,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/prompt-submit.js",
+      "accessCount": 6,
+      "lastAccessed": 1776445333978,
+      "type": "file"
+    },
+    {
+      "path": "src/config.js",
+      "accessCount": 5,
+      "lastAccessed": 1776445096116,
+      "type": "file"
+    },
+    {
+      "path": "src/prompt-guard.js",
+      "accessCount": 5,
+      "lastAccessed": 1776445286152,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/session-start.js",
+      "accessCount": 5,
+      "lastAccessed": 1776445291261,
+      "type": "file"
+    },
+    {
+      "path": "src/predictive-planner.js",
+      "accessCount": 4,
+      "lastAccessed": 1776419371694,
+      "type": "file"
+    },
+    {
+      "path": "src/tool-broker.js",
+      "accessCount": 4,
+      "lastAccessed": 1776419483610,
+      "type": "file"
+    },
+    {
+      "path": "src/wasm-bridge.js",
+      "accessCount": 4,
+      "lastAccessed": 1776419495182,
+      "type": "file"
+    },
+    {
+      "path": "src/token-budget.js",
+      "accessCount": 4,
+      "lastAccessed": 1776445293696,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/stop.js",
+      "accessCount": 4,
+      "lastAccessed": 1776445756136,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/semantic-deduper.test.js",
+      "accessCount": 3,
+      "lastAccessed": 1776322451380,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/live-ab.js",
+      "accessCount": 3,
+      "lastAccessed": 1776442782238,
+      "type": "file"
+    },
+    {
+      "path": "src/learning-store.js",
+      "accessCount": 3,
+      "lastAccessed": 1776442789118,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/shared.mjs",
+      "accessCount": 3,
+      "lastAccessed": 1776445285182,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/tool-broker.test.js",
+      "accessCount": 3,
+      "lastAccessed": 1776445624684,
+      "type": "file"
+    },
+    {
+      "path": "rust-wasm/Cargo.toml",
+      "accessCount": 2,
+      "lastAccessed": 1776323331865,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/wasm-bounds.test.js",
+      "accessCount": 2,
+      "lastAccessed": 1776441104818,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/benchmark.js",
+      "accessCount": 2,
+      "lastAccessed": 1776441205574,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/metrics.js",
+      "accessCount": 2,
+      "lastAccessed": 1776441206256,
+      "type": "file"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-04-18-teneb-install-ab-benchmark-design.md",
+      "accessCount": 2,
+      "lastAccessed": 1776441916593,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/fixtures.js",
+      "accessCount": 2,
+      "lastAccessed": 1776442060800,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/learning-store.test.js",
+      "accessCount": 2,
+      "lastAccessed": 1776445087401,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/token-budget.test.js",
+      "accessCount": 2,
+      "lastAccessed": 1776445157180,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 2,
+      "lastAccessed": 1776491035184,
+      "type": "directory"
+    },
+    {
+      "path": "src/micro-compact.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322060843,
+      "type": "file"
+    },
+    {
+      "path": "src/semantic-deduper.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322061297,
+      "type": "file"
+    },
+    {
+      "path": "src/prompt-compiler.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322061763,
+      "type": "file"
+    },
+    {
+      "path": "src/semantic-graph.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322063710,
+      "type": "file"
+    },
+    {
+      "path": "src/verifier.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322067812,
+      "type": "file"
+    },
+    {
+      "path": "src/cli.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322068293,
+      "type": "file"
+    },
+    {
+      "path": ".claude/hooks/pre-compact.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322074875,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/dashboard.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322107405,
+      "type": "file"
+    },
+    {
+      "path": "dashboard/index.html",
+      "accessCount": 1,
+      "lastAccessed": 1776322107933,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/micro-compact.test.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322286665,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/planner.test.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322353900,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/wasm-bridge.test.js",
+      "accessCount": 1,
+      "lastAccessed": 1776322362459,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark",
+      "accessCount": 1,
+      "lastAccessed": 1776441200657,
+      "type": "directory"
+    },
+    {
+      "path": ".claude/settings.example.json",
+      "accessCount": 1,
+      "lastAccessed": 1776441206036,
+      "type": "file"
+    },
+    {
+      "path": ".claude/settings.json",
+      "accessCount": 1,
+      "lastAccessed": 1776442077786,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/ab-compare.js",
+      "accessCount": 1,
+      "lastAccessed": 1776442092947,
+      "type": "file"
+    },
+    {
+      "path": "src/benchmark/prompts.js",
+      "accessCount": 1,
+      "lastAccessed": 1776442737149,
+      "type": "file"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-04-18-token-budget-system-design.md",
+      "accessCount": 1,
+      "lastAccessed": 1776444546529,
+      "type": "file"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-04-18-token-budget-system.md",
+      "accessCount": 1,
+      "lastAccessed": 1776444763709,
+      "type": "file"
+    },
+    {
+      "path": "src/tests/prompt-guard.test.js",
+      "accessCount": 1,
+      "lastAccessed": 1776445142204,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1776445379197,
+      "type": "directory"
+    }
+  ],
+  "userDirectives": []
+}

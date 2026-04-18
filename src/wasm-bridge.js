@@ -3,6 +3,9 @@ import path from 'node:path';
 import { microCompact } from './micro-compact.js';
 import { buildSemanticGraph, compactSemanticGraph } from './semantic-graph.js';
 
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
 function fallbackCompact(text, options = {}) {
   const compacted = microCompact(text, options);
   const graph = compactSemanticGraph(buildSemanticGraph(text), { maxNodes: options.maxNodes ?? 18 });
@@ -15,46 +18,57 @@ function fallbackCompact(text, options = {}) {
   };
 }
 
+// Load the raw WASM binary (no wasm-bindgen, no JS glue needed).
+// Built with: cargo build --target wasm32-unknown-unknown --release
+// Artifact: rust-wasm/target/wasm32-unknown-unknown/release/teneb_wasm.wasm
 export async function loadWasmEngine(projectDir = process.cwd()) {
-  const candidate = path.join(projectDir, 'rust-wasm', 'pkg', 'teneb_wasm_bg.wasm');
+  const candidate = path.join(
+    projectDir, 'rust-wasm', 'target',
+    'wasm32-unknown-unknown', 'release', 'teneb_wasm.wasm'
+  );
   if (!fs.existsSync(candidate)) return null;
-  const bytes = await fs.promises.readFile(candidate);
-  const mod = await WebAssembly.instantiate(bytes, {});
-  return mod.instance.exports;
+  try {
+    const bytes = await fs.promises.readFile(candidate);
+    const { instance } = await WebAssembly.instantiate(bytes, {});
+    return instance.exports;
+  } catch {
+    return null;
+  }
+}
+
+// Call a WASM function that follows the fixed-buffer protocol:
+//   input_buf_ptr() → write input bytes there
+//   fn(input_len, ...extra_args) → returns output_len
+//   output_buf_ptr() → read output_len bytes
+function callWasmStr(exports, fnName, text, ...extraArgs) {
+  const raw = encoder.encode(String(text || ''));
+  const inputBytes = raw.length <= 65536 ? raw : raw.slice(0, 65536);
+  const inputPtr = exports.input_buf_ptr();
+  new Uint8Array(exports.memory.buffer, inputPtr, inputBytes.length).set(inputBytes);
+  exports[fnName](inputBytes.length, ...extraArgs);
+  const outLen = exports.output_len();
+  const outPtr = exports.output_buf_ptr();
+  return decoder.decode(new Uint8Array(exports.memory.buffer, outPtr, outLen));
 }
 
 export async function compactWithWasm(text, options = {}, projectDir = process.cwd()) {
-  const wasm = await loadWasmEngine(projectDir);
-  if (!wasm || typeof wasm.micro_compact !== 'function') return fallbackCompact(text, options);
-
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
-
-  const inputBytes = encoder.encode(String(text || ''));
-  const ptr = wasm.alloc ? wasm.alloc(inputBytes.length) : 0;
-  if (wasm.memory && ptr) {
-    new Uint8Array(wasm.memory.buffer, ptr, inputBytes.length).set(inputBytes);
+  const exports = await loadWasmEngine(projectDir);
+  if (!exports || typeof exports.micro_compact !== 'function') {
+    return fallbackCompact(text, options);
   }
 
-  let result;
-  try {
-    const outPtr = wasm.micro_compact(ptr, inputBytes.length, options.maxLength ?? 280);
-    const outLen = wasm.last_output_len ? wasm.last_output_len() : options.maxLength ?? 280;
-    const output = new Uint8Array(wasm.memory.buffer, outPtr, outLen);
-    result = decoder.decode(output);
-  } finally {
-    if (wasm.free && ptr) wasm.free(ptr, inputBytes.length);
-  }
-
+  const result = callWasmStr(exports, 'micro_compact', text, options.maxLength ?? 280);
   const graph = compactSemanticGraph(buildSemanticGraph(text), { maxNodes: options.maxNodes ?? 18 });
+  const textStr = String(text || '');
+
   return {
     engine: 'rust-wasm',
     compacted: result,
     graph,
     stats: {
-      before_tokens: String(text || '').length / 4,
-      after_tokens: String(result || '').length / 4,
-      reduction_ratio: text ? 1 - String(result).length / String(text).length : 0
+      before_tokens: Math.ceil(textStr.length / 4),
+      after_tokens: Math.ceil(result.length / 4),
+      reduction_ratio: textStr.length ? 1 - result.length / textStr.length : 0
     }
   };
 }

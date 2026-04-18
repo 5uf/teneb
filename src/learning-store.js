@@ -81,4 +81,35 @@ export class LearningStore {
   recordRun(run) {
     return this.append({ type: 'run', ...run });
   }
+
+  // Returns aggregate stats from the most recent `n` post-tool-compaction records.
+  // Used by session-end to generate per-session summaries.
+  getRecentStats(n = 100) {
+    const records = this.readAll()
+      .filter((r) => r.pattern === 'post-tool-compaction')
+      .slice(-n);
+
+    const total       = records.length;
+    const success     = records.filter((r) => r.success).length;
+    const tokensSaved = records.reduce((s, r) => s + (r.tokens_saved || 0), 0);
+    const avgCompactMs = records.filter((r) => r.compact_ms > 0)
+      .reduce((s, r, _, a) => s + r.compact_ms / a.length, 0);
+
+    const toolCounts = {};
+    for (const r of records) {
+      if (r.tool_name) toolCounts[r.tool_name] = (toolCounts[r.tool_name] || 0) + 1;
+    }
+    const topTools = Object.entries(toolCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([t, c]) => `${t}(${c})`);
+
+    return {
+      tool_calls:     total,
+      success_rate:   total ? Number((success / total).toFixed(3)) : 0,
+      tokens_saved:   tokensSaved,
+      avg_compact_ms: Math.round(avgCompactMs),
+      top_tools:      topTools
+    };
+  }
 }
